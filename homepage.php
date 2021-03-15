@@ -5,7 +5,7 @@
   <style>
     .grid-container {
       display: grid;
-      padding-bottom: 40px;
+      padding-bottom: 50px;
       width: 100%;
     }
     .grid-header {
