@@ -28,7 +28,7 @@
 
 <header>
     <nav class="navbar navbar-custom navbar-expand-md navbar-dark">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="homepage.php">
             <h1 id="header-title">BPL</h1>
         </a>
 
@@ -45,11 +45,11 @@
                 <a class="nav-link" href="#">Statistics</a>
             </li>           
             <li class="nav-item">
-                <a class="nav-link" href="#">Profile</a>
+                <a class="nav-link" href="profile.php">Profile</a>
             <!-- <a class="nav-link disabled" href="#">Disabled-menu</a> -->
             </li>            
             <li class="nav-item"> 
-                <a class="nav-link" href="#">Settings</a>
+                <a class="nav-link" href="login.php">Log In</a>
             </li>
             <li class="nav-item">
                 <input type="search" class="form-control nav-search" placeholder="Search for players, teams, or events"/>
@@ -64,9 +64,9 @@
 
 <script>
     function setHeaderTitle() {
-        var concatTitle = (title) => {
+        var concatTitle = function(title) {
             return "BPL - " + title;
-        }
+        };
         document.getElementById("header-title").innerHTML = concatTitle(document.title);
     }
 </script>

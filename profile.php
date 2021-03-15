@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <title>Profile</title>
   <link rel="stylesheet" href="grid.css" />
 </head>
@@ -13,30 +13,47 @@
             <h1>Profile Info</h1>
         </div>
         <div class="grid-row">
-            <form name="profile-form">
-                <div class="form-group" id="profile-info">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" value="Jeremy Candor" disabled />
-                    
-                    <label for="email">Email Address</label>
-                    <input type="text" class="form-control" id="email" value="JCBuckets@example.com" disabled />
+            <div class="form-group" id="profile-info">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" value="Jeremy Candor" disabled />
+                
+                <label for="email">Email Address</label>
+                <input type="text" class="form-control" id="email" value="JCBuckets@example.com" disabled />
 
-                    <label for="team">Current Team</label>
-                    <input type="text" class="form-control" id="team" value="The Three Bucketeers" disabled />
-                </div>
-                <button class="btn-grid" onclick="editProfile()">
-                    Edit Profile
-                </button>
-            </form>
+                <label for="team">Current Team</label>
+                <input type="text" class="form-control" id="team" value="The Three Bucketeers" disabled />
+                
+                <button class="btn-grid" id="editButton" onclick="toggleEdit()">Edit Profile</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function editProfile() {
+        var disabled = true;
+
+        var toggleInput = (element) => {
+            if (disabled == true) {
+                element.removeAttribute("disabled");
+            } else {
+                element.setAttribute("disabled", "true");
+            }
+        };
+
+        function toggleEdit() {
             var inputElements = document.getElementById("profile-info").getElementsByClassName("form-control");
-            for (inputElement of inputElements) {
-                inputElement.removeAttribute("disabled");
-                inputElement.value = "YO";
+            var button = document.getElementById("editButton");
+
+            for (element of inputElements) {
+                toggleInput(element);
+            }
+
+            if (disabled == true) {
+                button.innerHTML = "Save Profile";
+                disabled = false;
+
+            } else {
+                button.innerHTML = "Edit Profile";
+                disabled = true;
             }
         }
     </script>
