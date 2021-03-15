@@ -64,6 +64,9 @@
 
 <script>
     function setHeaderTitle() {
-      document.getElementById("header-title").innerHTML = document.title;
+        var concatTitle = (title) => {
+            return "BPL - " + title;
+        }
+        document.getElementById("header-title").innerHTML = concatTitle(document.title);
     }
 </script>

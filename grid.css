@@ -1,0 +1,26 @@
+.grid-container {
+    display: grid;
+    padding-bottom: 50px;
+    width: 100%;
+}
+.grid-header {
+    background-color: goldenrod;
+    width: 100%;
+}
+.grid-row {
+    position: relative;
+    top: 25px;
+    border-radius: 25px;
+    border-style: solid;
+    background-color: #ba8dba;
+    text-align: center;
+    padding-bottom: 20px;
+    width: 75%;
+}
+.btn-grid {
+    height: 35%;
+    min-width: 20%;
+    color: white;
+    background-color: purple;
+    border-radius: 25px;
+}
