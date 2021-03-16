@@ -14,15 +14,14 @@
     </div>
     <div class="grid-row">
       <h2>BPL 2021 - 4/17/21</h2>
-      <h3>VS. The Blue Mountains</h3>
+      <h3>vs. The Blue Mountains</h3>
       <button class="btn-grid">
-        <a href="#"></a>
-        View Match
+        <a class="nav-link" href="match.php">View Match</a>
       </button>
     </div>
     <div class="grid-row">
       <h2>Exhibition - 4/19/21</h2>
-      <h3>VS. The Dudes</h3>
+      <h3>. The Dudes</h3>
       <button class="btn-grid">
         <a href="#"></a>
         View Match
