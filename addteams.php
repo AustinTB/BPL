@@ -71,7 +71,7 @@ function create_team($team_name, $p1_name, $p2_name, $p3_name) {
     $p2_id = get_player_id($p2_name);
     $p3_id = get_player_id($p3_name);
 
-    $query = "INSERT INTO team (team_name, league_id, player1_id, player2_id, player3_id) VALUES (:team_name, :league_id, :player1_id, :player2_id, player3_id)";
+    $query = "INSERT INTO team (team_name, league_id, player1_id, player2_id, player3_id) VALUES (:team_name, :league_id, :player1_id, :player2_id, :player3_id)";
     $sql = $db->prepare($query);
     $sql->bindValue(':team_name', $team_name);
     $sql->bindValue(':league_id', $league_id);
