@@ -6,7 +6,7 @@
 </head>
 
 <body>
-  <?php include('header.html') ?>
+  <?php include('header.php') ?>
 
   <div class="grid-container">
     <div class="grid-header">

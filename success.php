@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Login</title>
+  <title>Success</title>
   <link rel="stylesheet" href="grid.css" />
 </head>
 
 <body>
-    <?php include('header.html') ?>
+    <?php include('header.php') ?>
 
     <div class="grid-container">
         <div class="grid-header">

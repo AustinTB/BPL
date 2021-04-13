@@ -6,35 +6,49 @@
 </head>
 
 <body>
-    <?php include('header.html') ?>
-    <?php session_start(); ?>
-
-    <div class="grid-container">
-        <div class="grid-header">
-            <h1>Log in</h1>
-        </div>
-        <div class="grid-row">
-            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" onsubmit="return (validateInfo())">
-                <h3>Username: </h3> 
-                <input type="text" name="username" class="grid-input" autofocus required />
-                <div id="user-msg" class="feedback"></div> 
-                <br/>
-                <h3>Password: </h3> 
-                <input type="password" name="pwd" class="grid-input" required />
-                <div id="pwd-msg" class="feedback"></div> 
-                <br/>
-                <input type="submit" class="btn-grid" value="Log in" />   <!-- use input type="submit" with the required attribute -->
-            </form>
-            </br>
-            Don't have an account yet? <a href="signup.php">Sign up</a>
-            </br>
-        </div>
-    </div>
-
     <?php
+    require('connect-db.php');
+    include('header.php');
+
     // Verify the given credentials, and return true if they match an existing user.
     function verify_credentials($user, $pwd) {
-        return true;
+        global $db;
+
+        // query for admin users first
+        $query = "SELECT * FROM admin
+        WHERE admin_user = :user
+        AND admin_password = :pwd";
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':user', $user);
+        $statement->bindValue(':pwd', $pwd);
+        $statement->execute();
+
+        $result = $statement->fetch();
+
+        $retval = $statement->closeCursor();
+
+        if (strlen($result['admin_user']) > 0) return $retval;
+
+        // if no admin found, query for players
+        $query = "SELECT * FROM player
+        WHERE player_user = :user
+        AND player_password = :pwd";
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':user', $user);
+        $statement->bindValue(':pwd', $pwd);
+        $statement->execute();
+
+        $result = $statement->fetch();
+
+        $retval = $statement->closeCursor();
+
+        if (strlen($result['admin_user']) > 0) {
+            return $retval;
+        } else {
+            return false;
+        }
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && strlen($_POST['username']) > 0) {
@@ -42,13 +56,33 @@
         $user = htmlspecialchars($_POST['username']);
 
         if (verify_credentials($user, $pwd)) {
-            $_SESSION['user'] = $pwd;
-            $_SESSION['pwd'] = $user;
+            $_SESSION['user'] = $user;
+            $_SESSION['pwd'] = $pwd;
             header('Location: success.php');
         } else {
-            // error msg
+            echo "Login failed.";
         }
-    } 
+    }
     ?>
+
+    <div class="grid-container">
+        <div class="grid-header">
+            <h1>Log in</h1>
+        </div>
+        <div class="grid-row">
+            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                <div id="err-msg" class="feedback"></div> 
+                <h3>Username: </h3> 
+                <input type="text" name="username" class="grid-input" autofocus required />
+                <br/>
+                <h3>Password: </h3> 
+                <input type="password" name="pwd" class="grid-input" required />
+                <br/>
+                <input type="submit" class="btn-grid" value="Log in" />   <!-- use input type="submit" with the required attribute -->
+            </form>
+            </br>
+            <p>Don't have an account yet? Sign up as a <a href="player-signup.php">Player</a> or <a href="commisioner-signup.php">Commissioner</a></p>
+        </div>
+    </div>
 </body>
 </html>

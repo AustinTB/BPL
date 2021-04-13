@@ -27,6 +27,10 @@
 </head>
 
 <header>
+    <?php
+    session_start();
+    ?>
+
     <nav class="navbar navbar-custom navbar-expand-md navbar-dark">
         <a class="navbar-brand" href="homepage.php">
             <h1 id="header-title">BPL</h1>
@@ -47,9 +51,14 @@
             <li class="nav-item">
                 <a class="nav-link" href="profile.php">Profile</a>
             <!-- <a class="nav-link disabled" href="#">Disabled-menu</a> -->
-            </li>            
-            <li class="nav-item"> 
-                <a class="nav-link" href="login.php">Log In</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php if (isset($_SESSION['user'])) {echo 'logout.php';} else {echo 'login.php';}?>">
+                <?php if (isset($_SESSION['user'])) {echo 'Log Out';} else {echo 'Log In';}?>
+                </a>
+            </li>
+            <li class="nav-item">
+                <font color="white" style="font-style:italic"><?php if (isset($_SESSION['user'])) echo 'Signed in as: ' . $_SESSION['user'] ?></font>
             </li>
             <li class="nav-item">
                 <input type="search" class="form-control nav-search" placeholder="Search for players, teams, or events"/>

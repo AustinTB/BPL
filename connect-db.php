@@ -11,13 +11,13 @@ $db = "";
 
 try {
     $db = new PDO($dsn, $username, $password);
-    echo "<p>YOu have connected to the database.</p>";
+    // echo "<p>You have connected to the database.</p>";
 } catch (PDOException $e) {
     $error_message = $e->getMessage();
-    echo "<p>There was an error connecting to the database: $error_message </p>";
+    // echo "<p>There was an error connecting to the database: $error_message </p>";
 } catch (Exception $e) {
     $error_message = $e->getMessage();
-    echo "<p>Error: $error_message </p>";
+    // echo "<p>Error: $error_message </p>";
 }
 
 ?>

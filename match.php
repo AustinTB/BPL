@@ -41,7 +41,7 @@
 
 <body>
 
-     <?php include('header.html') ?>
+     <?php include('header.php') ?>
 
     <div class="jumbotron">
         <h1 style="color: white; text-align:left;">The Three Bucketeers vs. The Blue Mountains</h1>
