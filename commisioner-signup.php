@@ -33,6 +33,7 @@
         if (create_account($user, $pwd, $name)) {
             $_SESSION['user'] = $pwd;
             $_SESSION['pwd'] = $user;
+            setcookie('name', $name, time() + 3600);
             header('Location: success.php');
         } else {
             echo "Error - unable to create account";

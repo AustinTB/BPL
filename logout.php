@@ -13,8 +13,9 @@
           unset($_SESSION[$k]); // remove k/v pair from session object (server)
         }
         session_destroy(); // completely remove the instance (server)
-    
-        setcookie("PHPSESSID", "", time()-3600, "/"); // remove from client cookie file (set a new blank cookie in the past)
+    }
+    if (isset($_COOKIE['name'])) {
+        setcookie("name", "", time()-3600);
     }
     include('header.php')
     ?>

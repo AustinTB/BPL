@@ -58,7 +58,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <font color="white" style="font-style:italic"><?php if (isset($_SESSION['user'])) echo 'Signed in as: ' . $_SESSION['user'] ?></font>
+                <font color="white" style="font-style:italic"><?php if (isset($_SESSION['user']) && isset($_COOKIE['name'])) echo 'Signed in as: ' . $_COOKIE['name'] ?></font>
             </li>
             <li class="nav-item">
                 <input type="search" class="form-control nav-search" placeholder="Search for players, teams, or events"/>

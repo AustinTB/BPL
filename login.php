@@ -28,7 +28,10 @@
 
         $retval = $statement->closeCursor();
 
-        if (strlen($result['admin_user']) > 0) return $retval;
+        if (isset($result['admin_user'])) {
+            if (isset($result['admin_name'])) setcookie('name', $result['admin_name'], time() + 3600);
+            return $retval;
+        }
 
         // if no admin found, query for players
         $query = "SELECT * FROM player
@@ -44,7 +47,8 @@
 
         $retval = $statement->closeCursor();
 
-        if (strlen($result['admin_user']) > 0) {
+        if (isset($result['player_user']) > 0) {
+            if (isset($result['player_name'])) setcookie('name', $result['player_name'], time() + 3600);
             return $retval;
         } else {
             return false;
@@ -59,6 +63,7 @@
             $_SESSION['user'] = $user;
             $_SESSION['pwd'] = $pwd;
             header('Location: success.php');
+
         } else {
             echo "Login failed.";
         }
