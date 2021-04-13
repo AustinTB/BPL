@@ -6,9 +6,15 @@
 </head>
 
 <body>
-    <?php include('header.html');
-    include('connect-db.php'); ?>
-    <?php session_start(); ?>
+    <?php include('header.php');
+    include('connect-db.php');
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (!empty($_POST['action']) && ($_POST['action'] == 'Delete')) {
+            if (!empty($_POST['team_id'])) deleteTeam($_POST['team_id']);
+        }
+    }
+    $teams = getTeams();
+    ?>
 
     <div class="grid-container">
         <div class="grid-header">
@@ -28,18 +34,49 @@
                 <h3>Third Player's Name: </h3> 
                 <input type="text" name="p3_name" class="grid-input"/>
                 <br/>
-                <input type="submit" class="btn-grid" value="Add Team"/>   <!-- use input type="submit" with the required attribute -->
+                <input type="submit" class="btn-grid" value="Add Team"/>
             </form>
         </div>
         <div class="grid-row">
             <h3>Current Teams: </h3>
-
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Team Name</th>
+                    <th>Player</th>
+                    <th>Player</th>
+                    <th>Player</th>
+                    <th>(Delete?)</th>
+                </tr>
+                <?php foreach ($teams as $team): ?>
+                <tr>
+                <td>
+                    <?php echo $team['team_name']; ?>
+                </td>
+                <td>
+                    <?php echo $team['player1_id']; ?>
+                </td>
+                <td>
+                    <?php echo $team['player2_id']; ?> 
+                </td>
+                <td>
+                    <?php echo $team['player3_id']; ?> 
+                </td>
+                <td>
+                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                        <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
+                        <input type="hidden" name="team_id" value="<?php echo $team['team_id'] ?>" />
+                    </form>
+                </td>          
+                </tr>
+                <?php endforeach; ?>
+            </table>
         </div>
         <div class ="grid-row">
-        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-            <h5>When you're done adding teams, please click "Done!"</h5>
-            <input type="submit" class="btn-grid" value="Done"/>
-        </form>
+            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                <h5>When you're done adding teams, please click "Done!"</h5>
+                <input type="submit" class="btn-grid" value="Done"/>
+            </form>
+        </div>
     </div>
 
 </body>
@@ -47,7 +84,38 @@
 
 <?php
 
-function get_player_id($p_name){
+function deleteTeam($team_id) {
+    global $db;
+
+    $query = "DELETE FROM team
+    WHERE team_id = " . $team_id;
+
+    $statement = $db->prepare($query);
+    $statement->execute();
+    $retval = $statement->closeCursor();
+
+    return $retval;
+}
+
+// Return an array of all teams in this league, or null on failure.
+function getTeams() {
+    global $db;
+
+    if (!isset($_SESSION['league_id'])) return [];
+
+    $query = "SELECT * FROM team
+    WHERE league_id = " . $_SESSION['league_id'];
+
+    $statement = $db->prepare($query);
+    $statement->execute();
+
+    $results = $statement->fetchAll();
+
+    $statement->closeCursor();
+    return $results;
+}
+
+function get_player_id($p_name) {
     
     global $db;
 

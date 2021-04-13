@@ -6,9 +6,8 @@
 </head>
 
 <body>
-    <?php include('header.html');
+    <?php include('header.php');
     include('connect-db.php'); ?>
-    <?php session_start(); ?>
 
     <div class="grid-container">
         <div class="grid-header">
