@@ -54,19 +54,7 @@
                     </td>
                     <td>
                     <?php echo $team['player3_id']; ?> 
-                    </td>
-                    <td>
-                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-                        <input type="submit" value="Update" name="action" class="btn btn-primary" />             
-                        <input type="hidden" name="task_id" value="<?php echo $task['task_id'] ?>" />
-                    </form> 
-                    </td>                        
-                    <td>
-                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-                        <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
-                        <input type="hidden" name="task_id" value="<?php echo $task['task_id'] ?>" />
-                    </form>
-                    </td>                                
+                    </td>                             
                 </tr>
                 <?php endforeach; ?>
             </table>
@@ -90,8 +78,8 @@ function getTeams() {
 
     if (!isset($_SESSION['league_id'])) return [];
 
-    $query = "SELECT * FROM teams
-    WHERE league_id = '" . $_SESSION['league_id'] . "'";
+    $query = "SELECT * FROM team
+    WHERE league_id = " . $_SESSION['league_id'];
 
     $statement = $db->prepare($query);
     $statement->execute();
