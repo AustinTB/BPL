@@ -7,7 +7,12 @@
 
 <body>
     <?php include('header.php');
-    include('connect-db.php'); 
+    include('connect-db.php');
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (!empty($_POST['action']) && ($_POST['action'] == 'Delete')) {
+            if (!empty($_POST['team_id'])) deleteTeam($_POST['team_id']);
+        }
+    }
     $teams = getTeams();
     ?>
 
@@ -40,21 +45,28 @@
                     <th>Player</th>
                     <th>Player</th>
                     <th>Player</th>
+                    <th>(Delete?)</th>
                 </tr>
                 <?php foreach ($teams as $team): ?>
                 <tr>
-                    <td>
+                <td>
                     <?php echo $team['team_name']; ?>
-                    </td>
-                    <td>
+                </td>
+                <td>
                     <?php echo $team['player1_id']; ?>
-                    </td>
-                    <td>
+                </td>
+                <td>
                     <?php echo $team['player2_id']; ?> 
-                    </td>
-                    <td>
+                </td>
+                <td>
                     <?php echo $team['player3_id']; ?> 
-                    </td>                             
+                </td>
+                <td>
+                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                        <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
+                        <input type="hidden" name="team_id" value="<?php echo $team['team_id'] ?>" />
+                    </form>
+                </td>          
                 </tr>
                 <?php endforeach; ?>
             </table>
@@ -71,6 +83,19 @@
 </html>
 
 <?php
+
+function deleteTeam($team_id) {
+    global $db;
+
+    $query = "DELETE FROM team
+    WHERE team_id = " . $team_id;
+
+    $statement = $db->prepare($query);
+    $statement->execute();
+    $retval = $statement->closeCursor();
+
+    return $retval;
+}
 
 // Return an array of all teams in this league, or null on failure.
 function getTeams() {
