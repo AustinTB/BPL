@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Team Addition</title>
+  <title>Manage League</title>
   <link rel="stylesheet" href="grid.css" />
 </head>
 
 <body>
     <?php include('header.php');
     include('connect-db.php');
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (!empty($_POST['action']) && ($_POST['action'] == 'Delete')) {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['action'])) {
+        if ($_POST['action'] == 'Delete') {
             if (!empty($_POST['team_id'])) deleteTeam($_POST['team_id']);
+        
+        } else if ($_POST['action'] == 'Add') {
+            if (!empty($_POST['team_name']) && !empty($_POST['p1_name']) && !empty($_POST['p2_name']) && !empty($_POST['p3_name']))
+                create_team($_POST['team_name'], $_POST['p1_name'], $_POST['p2_name'], $_POST['p3_name']);
         }
     }
     $teams = getTeams();
@@ -18,23 +22,23 @@
 
     <div class="grid-container">
         <div class="grid-header">
-            <h1>Add Teams</h1>
+            <h1>Add Teams to League: <?php echo $_SESSION['league_name']?></h1>
         </div>
         <div class="grid-row">
-            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="get">
-                <h3>Team Name: </h3> 
-                <input type="text" name="team_name" class="grid-input"/>
+            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                <h3>Team Name: </h3>
+                <input type="text" name="team_name" class="grid-input" required />
                 <br/>
                 <h3>First Player's Name: </h3> 
-                <input type="text" name="p1_name" class="grid-input"/>
+                <input type="text" name="p1_name" class="grid-input" required />
                 <br/>
                 <h3>Second Player's Name: </h3> 
-                <input type="text" name="p2_name" class="grid-input"/>
+                <input type="text" name="p2_name" class="grid-input" required />
                 <br/>
                 <h3>Third Player's Name: </h3> 
-                <input type="text" name="p3_name" class="grid-input"/>
+                <input type="text" name="p3_name" class="grid-input" required />
                 <br/>
-                <input type="submit" class="btn-grid" value="Add Team"/>
+                <input type="submit" name="action" value="Add" class="btn-grid"/>
             </form>
         </div>
         <div class="grid-row">
@@ -49,32 +53,33 @@
                 </tr>
                 <?php foreach ($teams as $team): ?>
                 <tr>
-                <td>
-                    <?php echo $team['team_name']; ?>
-                </td>
-                <td>
-                    <?php echo $team['player1_id']; ?>
-                </td>
-                <td>
-                    <?php echo $team['player2_id']; ?> 
-                </td>
-                <td>
-                    <?php echo $team['player3_id']; ?> 
-                </td>
-                <td>
-                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-                        <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
-                        <input type="hidden" name="team_id" value="<?php echo $team['team_id'] ?>" />
-                    </form>
-                </td>          
+                    <td>
+                        <?php echo $team['team_name']; ?>
+                    </td>
+                    <td>
+                        <?php echo $team['player1_id']; ?>
+                    </td>
+                    <td>
+                        <?php echo $team['player2_id']; ?> 
+                    </td>
+                    <td>
+                        <?php echo $team['player3_id']; ?> 
+                    </td>
+                    <td>
+                        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                            <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
+                            <input type="hidden" name="team_id" value="<?php echo $team['team_id'] ?>" />
+                        </form>
+                    </td>          
                 </tr>
                 <?php endforeach; ?>
             </table>
         </div>
-        <div class ="grid-row">
-            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-                <h5>When you're done adding teams, please click "Done!"</h5>
-                <input type="submit" class="btn-grid" value="Done"/>
+        <div class="grid-row">
+            <form action="my-leagues.php">
+                <br/>
+                <input type="submit" class="btn-grid" value="Back to My Leagues" />
+                <br/>
             </form>
         </div>
     </div>
@@ -148,12 +153,5 @@ function create_team($team_name, $p1_name, $p2_name, $p3_name) {
     $sql->bindValue(':player3_id', $p3_id);
     $sql->execute();
     $sql->closeCursor();
-
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && strlen($_GET['team_name']) > 0 && strlen($_GET['p1_name']) > 0 && strlen($_GET['p2_name']) > 0 && strlen($_GET['p3_name']) > 0) {
-
-    create_team($_GET['team_name'], $_GET['p1_name'], $_GET['p2_name'], $_GET['p3_name']);
-
 }
 ?>
