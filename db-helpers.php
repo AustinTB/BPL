@@ -13,4 +13,20 @@ function getMyAdminId($username) {
 
     return $result;
 }
+
+// Return an array of all teams in a league
+function getTeams($league_id) {
+    global $db;
+
+    $query = "SELECT * FROM team
+    WHERE league_id = " . $league_id;
+
+    $statement = $db->prepare($query);
+    $statement->execute();
+
+    $results = $statement->fetchAll();
+
+    $statement->closeCursor();
+    return $results;
+}
 ?>

@@ -7,7 +7,8 @@
 
 <body>
     <?php include('header.php');
-    include('connect-db.php');
+    include('db-helpers.php');
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['action'])) {
         if ($_POST['action'] == 'Delete') {
             if (!empty($_POST['team_id'])) deleteTeam($_POST['team_id']);
@@ -15,9 +16,13 @@
         } else if ($_POST['action'] == 'Add') {
             if (!empty($_POST['team_name']) && !empty($_POST['p1_name']) && !empty($_POST['p2_name']) && !empty($_POST['p3_name']))
                 create_team($_POST['team_name'], $_POST['p1_name'], $_POST['p2_name'], $_POST['p3_name']);
+
+        } else if ($_POST['action'] == 'Delete League') {
+            if (!empty($_POST['league_id'])) deleteLeague($_POST['league_id']);
+            header('Location: my-leagues.php');
         }
     }
-    $teams = getTeams();
+    if (isset($_SESSION['league_id'])) $teams = getTeams($_SESSION['league_id']);
     ?>
 
     <div class="grid-container">
@@ -81,6 +86,14 @@
                 <input type="submit" class="btn-grid" value="Back to My Leagues" />
                 <br/>
             </form>
+            </br>
+            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                <br/>
+                <h5>Delete This League Permanently</h5>
+                <input type="submit" value="Delete League" name="action" class="btn btn-danger" />
+                <input type="hidden" name="league_id" value="<?php if (isset($_SESSION['league_id'])) echo $_SESSION['league_id'] ?>" />
+                <br/>
+            </form>
         </div>
     </div>
 
@@ -96,28 +109,33 @@ function deleteTeam($team_id) {
     WHERE team_id = " . $team_id;
 
     $statement = $db->prepare($query);
-    $statement->execute();
-    $retval = $statement->closeCursor();
+    $retval = $statement->execute();
+    $statement->closeCursor();
 
     return $retval;
 }
 
-// Return an array of all teams in this league, or null on failure.
-function getTeams() {
+function deleteLeague($league_id) {
     global $db;
 
-    if (!isset($_SESSION['league_id'])) return [];
-
-    $query = "SELECT * FROM team
-    WHERE league_id = " . $_SESSION['league_id'];
+    // First, delete all teams in this league
+    $query = "DELETE FROM team
+    WHERE league_id = " . $league_id;
 
     $statement = $db->prepare($query);
-    $statement->execute();
+    $retval = $statement->execute();
 
-    $results = $statement->fetchAll();
+    // Delete the league
+    if ($retval) {
+        $query = "DELETE FROM league
+        WHERE league_id = " . $league_id;
 
-    $statement->closeCursor();
-    return $results;
+        $statement = $db->prepare($query);
+        $statement->execute();
+        $retval = $statement->closeCursor();
+    }
+
+    return $retval;
 }
 
 function get_player_id($p_name) {

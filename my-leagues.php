@@ -8,7 +8,6 @@
 <body>
     <?php 
     include('header.php');
-    include('connect-db.php');
     include('db-helpers.php');
 
     if (isset($_SESSION['user'])) {
@@ -18,7 +17,12 @@
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['league_id'])) {
             $_SESSION['league_id'] = $_POST['league_id'];
             $_SESSION['league_name'] = $_POST['league_name'];
-            header('Location: addteams.php');
+            
+            if ($_POST['action'] == 'Manage') {
+                header('Location: addteams.php');
+            } else if ($_POST['action'] == 'Schedule') {
+                header('Location: schedule.php');
+            }
         }
     }
     ?>
@@ -30,12 +34,16 @@
 
         <?php foreach ($leagues as $league): ?>
         <div class="grid-row">
+            </br>
             <h3><?php echo $league['league_name'] ?></h3>
+            </br>
             <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-                <input type="submit" value="Manage" class="btn-grid" />
+                <input type="submit" name="action" value="Manage" class="btn-grid" />
+                <input type="submit" name="action" value="Schedule" class="btn-grid" />
                 <input type="hidden" name="league_id" value="<?php echo $league['league_id'] ?>" />
                 <input type="hidden" name="league_name" value="<?php echo $league['league_name'] ?>" />
             </form>
+            </br>
         </div>
         <?php endforeach; ?>
         <div class ="grid-row">
