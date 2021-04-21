@@ -9,8 +9,17 @@
     <?php include('header.php');
     include('db-helpers.php');
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['action'])) {}
     if (isset($_SESSION['league_id'])) {
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['action'])) {
+            if ($_POST['action'] == 'Add' && isset($_POST['team1']) && isset($_POST['team2']) && isset($_POST['game_date'])) {
+                create_match($_POST['game_name'], $_SESSION['league_id'], $_POST['team1'], $_POST['team2'], $_POST['game_date']);
+
+            } else if ($_POST['action'] == 'Delete' && isset($_POST['game_id'])) {
+                delete_match($_POST['game_id']);
+            }
+        }
+
         $matches = getMatches($_SESSION['league_id']);
         $teams = getTeams($_SESSION['league_id']);
     }
@@ -42,12 +51,43 @@
                 <br/>
                 <br/>
                 <h5>Date:</h5>
-                <input type="datetime-local" name="game_date" min="2020-01-01T00:00" max="2050-12-31T00:00">
+                <input type="datetime-local" name="game_date" min="2020-01-01T00:00" max="2050-12-31T00:00" required>
                 <input type="submit" name="action" value="Add" class="btn-grid"/>
             </form>
         </div>
         <div class="grid-row">
             <h3>Matches:</h3>
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Title</th>
+                    <th>Team 1</th>
+                    <th>Team 2</th>
+                    <th>Date</th>
+                    <th>(Delete?)</th>
+                </tr>
+                <?php foreach ($matches as $match): ?>
+                <tr>
+                    <td>
+                        <?php echo $match['game_name']; ?>
+                    </td>
+                    <td>
+                        <?php echo $match['team1_id']; ?>
+                    </td>
+                    <td>
+                        <?php echo $match['team2_id']; ?> 
+                    </td>
+                    <td>
+                        <?php echo $match['date']; ?> 
+                    </td>
+                    <td>
+                        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                            <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
+                            <input type="hidden" name="game_id" value="<?php echo $match['game_id'] ?>" />
+                        </form>
+                    </td>          
+                </tr>
+                <?php endforeach; ?>
+            </table>
         </div>
         <div class="grid-row">
             <form action="my-leagues.php">
@@ -67,7 +107,8 @@ function getMatches($league_id) {
     global $db;
 
     $query = "SELECT * FROM game
-    WHERE league_id = " . $league_id;
+    WHERE league_id = " . $league_id .
+    " ORDER BY date ASC";
 
     $statement = $db->prepare($query);
     $statement->execute();
@@ -76,5 +117,32 @@ function getMatches($league_id) {
 
     $statement->closeCursor();
     return $results;
+}
+
+function create_match($game_name, $league_id, $team1_id, $team2_id, $date) {
+
+    global $db;
+
+    $query = "INSERT INTO game (game_name, league_id, team1_id, team2_id, date)
+        VALUES (:game_name, :league_id, :team1_id, :team2_id, :date)";
+    
+    $sql = $db->prepare($query);
+    $sql->bindValue(':game_name', $game_name);
+    $sql->bindValue(':league_id', $league_id);
+    $sql->bindValue(':team1_id', $team1_id);
+    $sql->bindValue(':team2_id', $team2_id);
+    $sql->bindValue(':date', $date);
+    $sql->execute();
+    $sql->closeCursor();
+}
+
+function delete_match($game_id) {
+    global $db;
+
+    $query = "DELETE FROM game WHERE game_id = '".$game_id."'";;
+    
+    $sql = $db->prepare($query);
+    $sql->execute();
+    $sql->closeCursor();
 }
 ?>
