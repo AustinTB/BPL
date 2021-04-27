@@ -71,19 +71,24 @@
                         <?php echo $match['game_name']; ?>
                     </td>
                     <td>
-                        <?php echo $match['team1_id']; ?>
+                        <?php echo team_name_from_id($match['team1_id'], $teams); ?>
                     </td>
                     <td>
-                        <?php echo $match['team2_id']; ?> 
+                        <?php echo team_name_from_id($match['team2_id'], $teams); ?> 
                     </td>
                     <td>
                         <?php echo $match['date']; ?> 
                     </td>
                     <td>
-                        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
-                            <input type="submit" value="Delete" name="action" class="btn btn-danger" />      
+                        <form action="record-stats.php" method="post">
+                            <input type="submit" value="Record" name="action" class="btn-grid" />      
                             <input type="hidden" name="game_id" value="<?php echo $match['game_id'] ?>" />
                         </form>
+                        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                            <input type="submit" value="Delete" name="action" class="btn-danger" />      
+                            <input type="hidden" name="game_id" value="<?php echo $match['game_id'] ?>" />
+                        </form>
+                        </br>
                     </td>          
                 </tr>
                 <?php endforeach; ?>
@@ -139,10 +144,21 @@ function create_match($game_name, $league_id, $team1_id, $team2_id, $date) {
 function delete_match($game_id) {
     global $db;
 
-    $query = "DELETE FROM game WHERE game_id = '".$game_id."'";;
+    $query = "DELETE FROM game WHERE game_id = '".$game_id."'";
     
     $sql = $db->prepare($query);
     $sql->execute();
     $sql->closeCursor();
+}
+
+// To avoid unnecessary querying, use the existing $teams array to find a certain team's name
+function team_name_from_id($team_id, $teams_arr) {
+    if (!empty($teams_arr)) {
+        foreach ($teams_arr as $team):
+            if ($team['team_id'] == $team_id) return $team['team_name'];
+        endforeach;
+    }
+
+    return null;
 }
 ?>
