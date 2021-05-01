@@ -8,7 +8,6 @@
 <body>
     <?php
     include('header.php');
-    include('connect-db.php'); 
     include('db-helpers.php');
     ?>
 
