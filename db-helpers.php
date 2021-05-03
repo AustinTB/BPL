@@ -29,4 +29,19 @@ function getTeams($league_id) {
     $statement->closeCursor();
     return $results;
 }
+
+//Return an array of all players
+function getPlayers() {
+    global $db;
+
+    $query = "SELECT * FROM player WHERE 1";
+
+    $statement = $db->prepare($query);
+    $statement->execute();
+
+    $results = $statement->fetchAll();
+
+    $statement->closeCursor();
+    return $results;
+}
 ?>

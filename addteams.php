@@ -14,15 +14,20 @@
             if (!empty($_POST['team_id'])) deleteTeam($_POST['team_id']);
         
         } else if ($_POST['action'] == 'Add') {
-            if (!empty($_POST['team_name']) && !empty($_POST['p1_name']) && !empty($_POST['p2_name']) && !empty($_POST['p3_name']))
-                create_team($_POST['team_name'], $_POST['p1_name'], $_POST['p2_name'], $_POST['p3_name']);
+            if (!empty($_POST['team_name']) && isset($_POST['p1_user']) && isset($_POST['p2_user']) && isset($_POST['p3_user'])) //USER not NAME
+                create_team($_POST['team_name'], $_POST['p1_user'], $_POST['p2_user'], $_POST['p3_user']);
+                //echo "Did we get here?";
 
         } else if ($_POST['action'] == 'Delete League') {
             if (!empty($_POST['league_id'])) deleteLeague($_POST['league_id']);
             header('Location: my-leagues.php');
         }
     }
-    if (isset($_SESSION['league_id'])) $teams = getTeams($_SESSION['league_id']);
+    if (isset($_SESSION['league_id'])){
+        $teams = getTeams($_SESSION['league_id']);
+    }
+    $teams = getTeams($_SESSION['league_id']);
+    $players = getPlayers();
     ?>
 
     <div class="grid-container">
@@ -30,18 +35,42 @@
             <h1>Add Teams to League: <?php echo $_SESSION['league_name']?></h1>
         </div>
         <div class="grid-row">
-            <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+            <form action="<?php $_SERVER['PHP_SELF'] ?>" id="team_form" method="post">
                 <h3>Team Name: </h3>
                 <input type="text" name="team_name" class="grid-input" required />
                 <br/>
-                <h3>First Player's Name: </h3> 
-                <input type="text" name="p1_name" class="grid-input" required />
+                <h3>First Player:</h3>
+                
+                <select name="p1_user" form="team_form" required>
+                    <option value="" disabled selected>Select Player</option>
+                    <?php foreach ($players as $player): ?>
+                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_user']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+                <!--<input type="text" name="p1_name" class="grid-input" required />-->
                 <br/>
-                <h3>Second Player's Name: </h3> 
-                <input type="text" name="p2_name" class="grid-input" required />
+                <h3>Second Player:</h3>
+                
+                <select name="p2_user" form="team_form" required>
+                    <option value="" disabled selected>Select Player</option>
+                    <?php foreach ($players as $player): ?>
+                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_user']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+                <!--<input type="text" name="p2_name" class="grid-input" required />-->
                 <br/>
-                <h3>Third Player's Name: </h3> 
-                <input type="text" name="p3_name" class="grid-input" required />
+                <h3>Third Player:</h3>
+
+                <select name="p3_user" form="team_form" required>
+                    <option value="" disabled selected>Select Player</option>
+                    <?php foreach ($players as $player): ?>
+                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_user']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+                <!--<input type="text" name="p3_name" class="grid-input" required />-->
                 <br/>
                 <input type="submit" name="action" value="Add" class="btn-grid"/>
             </form>
@@ -138,13 +167,13 @@ function deleteLeague($league_id) {
     return $retval;
 }
 
-function get_player_id($p_name) {
+function get_player_id($p_user) {
     
     global $db;
 
-    $p_name = trim($p_name);
+    $p_user = trim($p_user);
 
-    $query = "SELECT player_id FROM player WHERE player_name = '".$p_name."'";
+    $query = "SELECT player_id FROM player WHERE player_user = '".$p_user."'";
     $sql = $db->prepare($query);
     $sql->execute();
     $result = $sql->fetch();
@@ -153,14 +182,14 @@ function get_player_id($p_name) {
     return $result[0];
 }
 
-function create_team($team_name, $p1_name, $p2_name, $p3_name) {
+function create_team($team_name, $p1_id, $p2_id, $p3_id) {
 
     global $db;
-
+    //echo "WERE HERE";
     $league_id = $_SESSION['league_id'];
-    $p1_id = get_player_id($p1_name);
-    $p2_id = get_player_id($p2_name);
-    $p3_id = get_player_id($p3_name);
+    //$p1_id = 1; ///get_player_id($p1_user);
+    //$p2_id = 2; //get_player_id($p2_user);
+    //$p3_id = 3; //get_player_id($p3_user);
 
     $query = "INSERT INTO team (team_name, league_id, player1_id, player2_id, player3_id) VALUES (:team_name, :league_id, :player1_id, :player2_id, :player3_id)";
     $sql = $db->prepare($query);
@@ -171,5 +200,7 @@ function create_team($team_name, $p1_name, $p2_name, $p3_name) {
     $sql->bindValue(':player3_id', $p3_id);
     $sql->execute();
     $sql->closeCursor();
+
+    //echo "MAYBE HERE";
 }
 ?>
