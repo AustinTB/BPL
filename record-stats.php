@@ -21,7 +21,13 @@
             $players2 = getTeamMembers($team2);
 
         } else if ($_POST['action'] == 'Finalize' 
-            && isset($_POST['game_id']) && isset($_POST['players1']) && isset($_POST['players2'])) {
+            && isset($_POST['game_id'])) {
+
+                $team1 = getTeam($_POST['team1_id']);
+                $players1 = getTeamMembers($team1);
+
+                $team2 = getTeam($_POST['team2_id']);
+                $players2 = getTeamMembers($team2);
 
                 if ($_POST['winner'] == $_POST['team1_id']) {
                     $loser = $_POST['team2_id'];
@@ -38,9 +44,9 @@
                 $cc2 = [$_POST['cc4'], $_POST['cc5'], $_POST['cc6']];
 
                 // Record the stats to the DB
-                finalizeStats($_POST['game_id'], $_POST['players1'], $_POST['players2'],
+                finalizeStats($_POST['game_id'], $players1, $players2,
                 $_POST['winner'], $loser, $hits1, $hits2, $miss1, $miss2, $cc1, $cc2);
-                
+
                 header('Location: schedule.php');
         }
     }
@@ -160,8 +166,6 @@
                 <input type="hidden" name="game_id" value="<?php echo $game_id ?>" />
                 <input type="hidden" name="team1_id" value="<?php echo $team1['team_id'] ?>" />
                 <input type="hidden" name="team2_id" value="<?php echo $team2['team_id'] ?>" />
-                <input type="hidden" name="players1" value="<?php echo $players1 ?>" />
-                <input type="hidden" name="players2" value="<?php echo $players2 ?>" />
                 <br/>
             </div>
         </form>
