@@ -14,8 +14,8 @@
             if (!empty($_POST['team_id'])) deleteTeam($_POST['team_id']);
         
         } else if ($_POST['action'] == 'Add') {
-            if (!empty($_POST['team_name']) && isset($_POST['p1_user']) && isset($_POST['p2_user']) && isset($_POST['p3_user'])) //USER not NAME
-                create_team($_POST['team_name'], $_POST['p1_user'], $_POST['p2_user'], $_POST['p3_user']);
+            if (!empty($_POST['team_name']) && isset($_POST['p1_id']) && isset($_POST['p2_id']) && isset($_POST['p3_id'])) //USER not NAME
+                create_team($_POST['team_name'], $_POST['p1_id'], $_POST['p2_id'], $_POST['p3_id']);
                 //echo "Did we get here?";
 
         } else if ($_POST['action'] == 'Delete League') {
@@ -41,10 +41,10 @@
                 <br/>
                 <h3>First Player:</h3>
                 
-                <select name="p1_user" form="team_form" required>
+                <select name="p1_id" form="team_form" required>
                     <option value="" disabled selected>Select Player</option>
                     <?php foreach ($players as $player): ?>
-                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_user']; ?></option>
+                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_name']; ?></option>
                     <?php endforeach; ?>
                 </select>
 
@@ -52,10 +52,10 @@
                 <br/>
                 <h3>Second Player:</h3>
                 
-                <select name="p2_user" form="team_form" required>
+                <select name="p2_id" form="team_form" required>
                     <option value="" disabled selected>Select Player</option>
                     <?php foreach ($players as $player): ?>
-                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_user']; ?></option>
+                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_name']; ?></option>
                     <?php endforeach; ?>
                 </select>
 
@@ -63,10 +63,10 @@
                 <br/>
                 <h3>Third Player:</h3>
 
-                <select name="p3_user" form="team_form" required>
+                <select name="p3_id" form="team_form" required>
                     <option value="" disabled selected>Select Player</option>
                     <?php foreach ($players as $player): ?>
-                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_user']; ?></option>
+                    <option value="<?php echo $player['player_id'] ?>"><?php echo $player['player_name']; ?></option>
                     <?php endforeach; ?>
                 </select>
 
@@ -91,13 +91,13 @@
                         <?php echo $team['team_name']; ?>
                     </td>
                     <td>
-                        <?php echo $team['player1_id']; ?>
+                        <?php echo get_player_name($team['player1_id']); ?>
                     </td>
                     <td>
-                        <?php echo $team['player2_id']; ?> 
+                        <?php echo get_player_name($team['player2_id']); ?> 
                     </td>
                     <td>
-                        <?php echo $team['player3_id']; ?> 
+                        <?php echo get_player_name($team['player3_id']); ?> 
                     </td>
                     <td>
                         <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
@@ -178,6 +178,18 @@ function get_player_id($p_user) {
     $sql->execute();
     $result = $sql->fetch();
     $sql->closeCursor();
+
+    return $result[0];
+}
+
+function get_player_name($p_id) {
+    global $db;
+
+    $query = "SELECT player_name FROM player WHERE player_id = " . $p_id;
+    $stm = $db->prepare($query);
+    $stm->execute();
+    $result = $stm->fetch();
+    $stm->closeCursor();
 
     return $result[0];
 }
