@@ -9,6 +9,24 @@
     <?php
     require('connect-db.php');
     include('header.php');
+
+    //Check if a user exists
+    function user_check($user){
+        global $db;
+
+        $query = "SELECT * FROM admin WHERE admin_user = " . $db->quote($user);
+
+        $statement = $db->prepare($query);
+        $statement->execute();
+        $result = $statement->fetch();
+        $statement->closeCursor();
+
+        if (! $result){
+            return false;
+        } else {
+            return true;
+        }
+    }
     
     // Create a user account with the given credentials. Return true if successful.
     function create_account($user, $pwd, $name) {
@@ -30,13 +48,15 @@
         $user = htmlspecialchars($_POST['username']);
         $name = htmlspecialchars($_POST['name']);
 
-        if (create_account($user, $pwd, $name)) {
-            $_SESSION['user'] = $pwd;
-            $_SESSION['pwd'] = $user;
+        if (user_check($user)){
+            echo "Error: unable to create account. Try a new username.";
+        } elseif (create_account($user, $pwd, $name)) {
+            $_SESSION['user'] = $user;
+            $_SESSION['pwd'] = $pwd;
             setcookie('name', $name, time() + 3600);
             header('Location: success.php');
         } else {
-            echo "Error - unable to create account";
+            echo "Error - unable to create account, external error.";
         }
     }
     ?>
