@@ -63,7 +63,7 @@
                     <th>Team 1</th>
                     <th>Team 2</th>
                     <th>Date</th>
-                    <th>(Delete?)</th>
+                    <th>Manage</th>
                 </tr>
                 <?php foreach ($matches as $match): ?>
                 <tr>
