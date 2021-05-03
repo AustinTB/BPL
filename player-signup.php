@@ -50,6 +50,19 @@
         return $statement->closeCursor();
     }
 
+    function getPlayerId($user) {
+        global $db;
+
+        $query = "SELECT player_id FROM player WHERE player_user = " . $user;
+
+        $statement = $db->prepare($query);
+        $statement->execute();
+        $result = $statement->fetch();
+        $statement->closeCursor();
+
+        return $result;
+    }
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && strlen($_POST['username']) > 0) {
         $pwd = htmlspecialchars($_POST['pwd']);
         $user = htmlspecialchars($_POST['username']);
@@ -59,7 +72,7 @@
             echo "Error: unable to create account. Try a new username.";
         } elseif (create_account($user, $pwd, $name)) {
             $_SESSION['user'] = $user;
-            $_SESSION['pwd'] = $pwd;
+            $_SESSION['id'] = getPlayerId($user);
             setcookie('name', $name, time() + 3600);
             header('Location: success.php');
         } else {

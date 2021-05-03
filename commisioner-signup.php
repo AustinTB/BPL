@@ -10,7 +10,7 @@
     require('connect-db.php');
     include('header.php');
 
-    //Check if a user exists
+    // Check if a user exists
     function user_check($user){
         global $db;
 
@@ -43,6 +43,19 @@
         return $statement->closeCursor();
     }
 
+    function getAdminId($user) {
+        global $db;
+
+        $query = "SELECT admin_id FROM admin WHERE admin_user = " . $user;
+
+        $statement = $db->prepare($query);
+        $statement->execute();
+        $result = $statement->fetch();
+        $statement->closeCursor();
+
+        return $result;
+    }
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && strlen($_POST['username']) > 0) {
         $pwd = htmlspecialchars($_POST['pwd']);
         $user = htmlspecialchars($_POST['username']);
@@ -52,7 +65,8 @@
             echo "Error: unable to create account. Try a new username.";
         } elseif (create_account($user, $pwd, $name)) {
             $_SESSION['user'] = $user;
-            $_SESSION['pwd'] = $pwd;
+            $_SESSION['id'] = getAdminId($user);
+            $_SESSION['admin'] = true;
             setcookie('name', $name, time() + 3600);
             header('Location: success.php');
         } else {

@@ -35,35 +35,28 @@
         <a class="navbar-brand" href="homepage.php">
             <h1 id="header-title">BPL</h1>
         </a>
-
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
         <div class="collapse navbar-collapse" id="collapsibleNavbar">   
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="my-leagues.php">My Leagues</a>
-            </li>              
-            <li class="nav-item">
-                <a class="nav-link" href="#">Statistics</a>
-            </li>           
-            <li class="nav-item">
-                <a class="nav-link" href="profile.php">Profile</a>
-            <!-- <a class="nav-link disabled" href="#">Disabled-menu</a> -->
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?php if (isset($_SESSION['user'])) {echo 'logout.php';} else {echo 'login.php';}?>">
-                <?php if (isset($_SESSION['user'])) {echo 'Log Out';} else {echo 'Log In';}?>
-                </a>
-            </li>
-            <li class="nav-item">
-                <font color="white" style="font-style:italic"><?php if (isset($_SESSION['user']) && isset($_COOKIE['name'])) echo 'Signed in as: ' . $_COOKIE['name'] ?></font>
-            </li>
-            <li class="nav-item">
-                <input type="search" class="form-control nav-search" placeholder="Search for players, teams, or events"/>
-            </li>
-        </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="player-stats.php">Player Statistics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php if (isset($_SESSION['admin'])) {echo 'my-leagues.php';} else if (isset($_SESSION['id'])) {echo 'player-stats.php?id=' . $_SESSION['id'];}?>">
+                    <?php if (isset($_SESSION['admin'])) {echo 'My Leagues';} else if (isset($_SESSION['id'])) {echo 'My Stats';} ?>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php if (isset($_SESSION['user'])) {echo 'logout.php';} else {echo 'login.php';}?>">
+                    <?php if (isset($_SESSION['user'])) {echo 'Log Out';} else {echo 'Log In';}?>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <font color="white" style="font-style:italic"><?php if (isset($_SESSION['user']) && isset($_COOKIE['name'])) echo 'Signed in as: ' . $_COOKIE['name'] ?></font>
+                </li>
+                <li class="nav-item">
+                    <input type="search" class="form-control nav-search" placeholder="Search for players, teams, or events"/>
+                </li>
+            </ul>
         </div>  
                 
     </nav>

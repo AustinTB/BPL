@@ -30,6 +30,8 @@
 
         if (isset($result['admin_user'])) {
             if (isset($result['admin_name'])) setcookie('name', $result['admin_name'], time() + 3600);
+            $_SESSION['admin'] = true;
+            $_SESSION['id'] = $result['admin_id'];
             return $retval;
         }
 
@@ -49,6 +51,7 @@
 
         if (isset($result['player_user']) > 0) {
             if (isset($result['player_name'])) setcookie('name', $result['player_name'], time() + 3600);
+            $_SESSION['id'] = $result['player_id'];
             return $retval;
         } else {
             return false;
