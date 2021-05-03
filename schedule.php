@@ -107,13 +107,14 @@
 
 <?php
 
-// Return an array of all matches in a league
+// Return an array of all INCOMPLETE matches in a league
 function getMatches($league_id) {
     global $db;
 
     $query = "SELECT * FROM game
     WHERE league_id = " . $league_id .
-    " ORDER BY date ASC";
+    " AND winner IS NULL
+     ORDER BY date ASC";
 
     $statement = $db->prepare($query);
     $statement->execute();
