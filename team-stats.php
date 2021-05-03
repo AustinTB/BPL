@@ -41,17 +41,17 @@
                 </tr>
                 <tr>
                     <td>
-                        <h3><a class="badge badge-warning" href="<?php echo "player-stats.php?id=" . $team_stat['player1_id'] ?>">
+                        <h3><a class="badge badge-light" href="<?php echo "player-stats.php?id=" . $team_stat['player1_id'] ?>">
                             <?php echo get_player_name($team_stat['player1_id']) ?>
                         </a></h3>
                     </td>
                     <td>
-                        <h3><a class="badge badge-warning" href="<?php echo "player-stats.php?id=" . $team_stat['player2_id'] ?>">
+                        <h3><a class="badge badge-light" href="<?php echo "player-stats.php?id=" . $team_stat['player2_id'] ?>">
                             <?php echo get_player_name($team_stat['player2_id']) ?>
                         </a></h3>
                     </td>
                     <td>
-                        <h3><a class="badge badge-warning" href="<?php echo "player-stats.php?id=" . $team_stat['player3_id'] ?>">
+                        <h3><a class="badge badge-light" href="<?php echo "player-stats.php?id=" . $team_stat['player3_id'] ?>">
                             <?php echo get_player_name($team_stat['player3_id']) ?>
                         </a></h3>
                     </td>

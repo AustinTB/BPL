@@ -25,7 +25,7 @@
         <div class="grid-header">
             <h1>Match Statistics</h1>
         </div>
-        <h6>(Click on a PEEPEEPOOPOO to view their stats)</h6>
+        <h6>(Click on a team's name to view their stats)</h6>
         <?php foreach ($stats as $match_stat):
         if ($match_stat['team1_id'] == $match_stat['winner']) $winnerA = true;
         else $winnerA = false;
@@ -51,11 +51,19 @@
                 <tr>
                     <th></th>
                     <th></th>
-                    <th><?php if ($winnerA) echo "<span class='badge badge-warning'>Winners</span>"; ?><h4><?php echo $teamA['team_name']; ?></h4></th>
+                    <th><?php if ($winnerA) echo "<span class='badge badge-pill badge-warning'>Winners</span>"; else echo "</br>" ?>
+                        <h4><a class="badge badge-light" href="<?php echo "team-stats.php?team_id=" . $teamA['team_id'] ?>">
+                            <?php echo $teamA['team_name'] ?>
+                        </a></h4>
+                    </th>
                     <th></th>
                     <th><h5>VS.</h5></th>
                     <th></th>
-                    <th><?php if (!$winnerA) echo "<span class='badge badge-warning'>Winners</span>"; ?><h4><?php echo $teamB['team_name'] ?></h4></th>
+                    <th><?php if (!$winnerA) echo "<span class='badge badge-pill badge-warning'>Winners</span>"; else echo "</br>" ?>
+                        <h4><a class="badge badge-light" href="<?php echo "team-stats.php?team_id=" . $teamB['team_id'] ?>">
+                            <?php echo $teamB['team_name'] ?>
+                        </a></h4>
+                    </th>
                     <th></th>
                 </tr>
                 <tr>
