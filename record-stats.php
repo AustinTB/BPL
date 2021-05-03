@@ -11,13 +11,37 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['action'])) {
         if ($_POST['action'] == 'Record' && isset($_POST['game_id'])) {
-            $match = getMatch($_POST['game_id']);
+            $game_id = $_POST['game_id'];
+            $match = getMatch($game_id);
 
             $team1 = getTeam($match['team1_id']);
             $players1 = getTeamMembers($team1);
 
             $team2 = getTeam($match['team2_id']);
             $players2 = getTeamMembers($team2);
+
+        } else if ($_POST['action'] == 'Finalize' 
+            && isset($_POST['game_id']) && isset($_POST['players1']) && isset($_POST['players2'])) {
+
+                if ($_POST['winner'] == $_POST['team1_id']) {
+                    $loser = $_POST['team2_id'];
+                } else {
+                    $loser = $_POST['team1_id'];
+                }
+
+                // Build arrays for the finalized stats
+                $hits1 = [$_POST['hits1'], $_POST['hits2'], $_POST['hits3']];
+                $hits2 = [$_POST['hits4'], $_POST['hits5'], $_POST['hits6']];
+                $miss1 = [$_POST['miss1'], $_POST['miss2'], $_POST['miss3']];
+                $miss2 = [$_POST['miss4'], $_POST['miss5'], $_POST['miss6']];
+                $cc1 = [$_POST['cc1'], $_POST['cc2'], $_POST['cc3']];
+                $cc2 = [$_POST['cc4'], $_POST['cc5'], $_POST['cc6']];
+
+                // Record the stats to the DB
+                finalizeStats($_POST['game_id'], $_POST['players1'], $_POST['players2'],
+                $_POST['winner'], $loser, $hits1, $hits2, $miss1, $miss2, $cc1, $cc2);
+                
+                header('Location: schedule.php');
         }
     }
     ?>
@@ -26,8 +50,8 @@
         <div class="grid-header">
             <h1>Record Stats for Match: <?php echo $match['game_name']?></h1>
         </div>
-        <div class="grid-row">
-            <form action="<?php $_SERVER['PHP_SELF'] ?>" id="stats_form" method="post">
+        <form action="<?php $_SERVER['PHP_SELF'] ?>" id="stats_form" method="post">
+            <div class="grid-row">
                 <table class="table table-striped table-bordered">
                     <tr>
                         <th></th>
@@ -129,13 +153,114 @@
                     <option value="<?php echo $team1['team_id'] ?>"><?php echo $team1['team_name']; ?></option>
                     <option value="<?php echo $team2['team_id'] ?>"><?php echo $team2['team_name']; ?></option>
                 </select>
-            </form>
-        </div>
+            </div>
+            <div class="grid-row">
+                <br/>
+                <input type="submit" class="btn-grid" name="action" value="Finalize" />
+                <input type="hidden" name="game_id" value="<?php echo $game_id ?>" />
+                <input type="hidden" name="team1_id" value="<?php echo $team1['team_id'] ?>" />
+                <input type="hidden" name="team2_id" value="<?php echo $team2['team_id'] ?>" />
+                <input type="hidden" name="players1" value="<?php echo $players1 ?>" />
+                <input type="hidden" name="players2" value="<?php echo $players2 ?>" />
+                <br/>
+            </div>
+        </form>
     </div>
 </body>
 </html>
 
 <?php
+
+// Write the final match stats to the database
+function finalizeStats($game_id, $players1, $players2, $winner_id, $loser_id,
+    $hits1, $hits2, $miss1, $miss2, $cc1, $cc2) {
+
+        // Record winner/loser
+        recordWinnerForGame($game_id, $winner_id);
+        
+        // Adjust team's W/L stats
+        recordWin($winner_id);
+        recordLoss($loser_id);
+
+        // Record stats for each player
+        for ($i = 0; $i <= 2; $i++) {
+            // Record each player's stats for this game
+            createGameStat($game_id, $players1[$i]['player_id'], $hits1[$i], $miss1[$i], $cc1[$i]);
+            createGameStat($game_id, $players2[$i]['player_id'], $hits2[$i], $miss2[$i], $cc2[$i]);
+            
+            // Adjust each player's global stats
+            updatePlayerStats($players1[$i]['player_id'], $hits1[$i], $miss1[$i], $cc1[$i]);
+            updatePlayerStats($players2[$i]['player_id'], $hits2[$i], $miss2[$i], $cc2[$i]);
+        }
+}
+
+// Update a player's hits, misses, and called cups stats
+function updatePlayerStats($player_id, $hits, $misses, $called_cups) {
+    global $db;
+
+    $query = "UPDATE player
+    SET hits = hits + " . $hits
+    . ", misses = misses + " . $misses
+    . ", called_cups = called_cups + " . $called_cups
+    . " WHERE player_id = " . $player_id;
+
+    $sql = $db->prepare($query);
+    $sql->execute();
+    $sql->closeCursor();
+}
+
+// Adjust a team's stats to reflect a win
+function recordWin($winner_id) {
+    global $db;
+
+    $query = "UPDATE team SET wins = wins + 1
+    WHERE team_id = " . $winner_id;
+
+    $sql = $db->prepare($query);
+    $sql->execute();
+    $sql->closeCursor();
+}
+
+// Adjust a team's stats to reflect a loss
+function recordLoss($loser_id) {
+    global $db;
+
+    $query = "UPDATE team SET losses = losses + 1
+    WHERE team_id = " . $loser_id;
+
+    $sql = $db->prepare($query);
+    $sql->execute();
+    $sql->closeCursor();
+}
+
+// Set the 'winner' column for the game
+function recordWinnerForGame($game_id, $winner_id) {
+    global $db;
+
+    $query = "UPDATE game SET winner = " . $winner_id
+    . " WHERE game_id = " . $game_id;
+
+    $sql = $db->prepare($query);
+    $sql->execute();
+    $sql->closeCursor();
+}
+
+// Create a record of an individual player's performance in the game
+function createGameStat($game_id, $player_id, $hits, $misses, $called_cups) {
+    global $db;
+
+    $query = "INSERT INTO gamestat (game_id, player_id, hits, misses, called_cups)
+    VALUES (:game_id, :player_id, :hits, :misses, :called_cups)";
+
+    $sql = $db->prepare($query);
+    $sql->bindValue(':game_id', $game_id);
+    $sql->bindValue(':player_id', $player_id);
+    $sql->bindValue(':hits', $hits);
+    $sql->bindValue(':misses', $misses);
+    $sql->bindValue(':called_cups', $called_cups);
+    $sql->execute();
+    $sql->closeCursor();
+}
 
 // Get the match to enter stats for
 function getMatch($game_id) {
