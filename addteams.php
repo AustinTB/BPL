@@ -167,33 +167,6 @@ function deleteLeague($league_id) {
     return $retval;
 }
 
-function get_player_id($p_user) {
-    
-    global $db;
-
-    $p_user = trim($p_user);
-
-    $query = "SELECT player_id FROM player WHERE player_user = '".$p_user."'";
-    $sql = $db->prepare($query);
-    $sql->execute();
-    $result = $sql->fetch();
-    $sql->closeCursor();
-
-    return $result[0];
-}
-
-function get_player_name($p_id) {
-    global $db;
-
-    $query = "SELECT player_name FROM player WHERE player_id = " . $p_id;
-    $stm = $db->prepare($query);
-    $stm->execute();
-    $result = $stm->fetch();
-    $stm->closeCursor();
-
-    return $result[0];
-}
-
 function create_team($team_name, $p1_id, $p2_id, $p3_id) {
 
     global $db;

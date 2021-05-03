@@ -47,7 +47,7 @@
                 finalizeStats($_POST['game_id'], $players1, $players2,
                 $_POST['winner'], $loser, $hits1, $hits2, $miss1, $miss2, $cc1, $cc2);
 
-                header('Location: schedule.php');
+                header('Location: match-stats.php?game_id=' . $_POST['game_id']);
         }
     }
     ?>

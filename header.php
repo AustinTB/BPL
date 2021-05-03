@@ -38,6 +38,9 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">   
             <ul class="navbar-nav">
                 <li class="nav-item">
+                    <a class="nav-link" href="select-league.php">League Statistics</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="player-stats.php">Player Statistics</a>
                 </li>
                 <li class="nav-item">
