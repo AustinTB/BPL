@@ -86,4 +86,31 @@ function get_player_name($p_id) {
 
     return $result[0];
 }
+
+function getTotalStat($col) {
+    global $db;
+
+    $query = "SELECT SUM(" . $col . ") FROM player";
+    $stm = $db->prepare($query);
+    $stm->execute();
+    $result = $stm->fetch();
+    $stm->closeCursor();
+
+    return $result[0];
+}
+
+// Get the player with the highest value of the specified column
+function getLeader($col) {
+    global $db;
+
+    $query = "SELECT * FROM player
+    ORDER BY " . $col . " DESC LIMIT 1";
+    
+    $stm = $db->prepare($query);
+    $stm->execute();
+    $result = $stm->fetch();
+    $stm->closeCursor();
+
+    return $result;
+}
 ?>
