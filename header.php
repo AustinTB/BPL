@@ -56,9 +56,9 @@
                 <li class="nav-item">
                     <font color="white" style="font-style:italic"><?php if (isset($_SESSION['user']) && isset($_COOKIE['name'])) echo 'Signed in as: ' . $_COOKIE['name'] ?></font>
                 </li>
-                <!--<li class="nav-item">
-                    <input type="search" class="form-control nav-search" placeholder="Search for players, teams, or events"/>
-                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:4200">Stat Request</a>
+                </li>
             </ul>
         </div>  
                 
